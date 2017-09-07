@@ -32,6 +32,8 @@ from getpass import getpass
 # pip install beautifulsoup4
 from bs4 import BeautifulSoup
 
+import re
+
 # globals
 session = requests.Session()
 
@@ -295,6 +297,7 @@ def download_recoding(recording, dest_folder=None):
     destination = os.path.join(dest_folder, filename)
 
     # download!
+    print destination
     wget.download(url, out=destination)
 
 def main():
@@ -356,14 +359,14 @@ def main():
 
     # create folder for recordings
     course = recordings[0]["sitename"]
-    directory = course
+    directory = '-'.join(re.findall('[A-Za-z0-9]+', course))
     if not os.path.exists(directory):
         os.makedirs(directory)
 
     # download files
     for index, recording in enumerate(recordings):
         print "(%i/%i) Downloading %s ..." % (index + 1, len(recordings), recording["title"])
-        download_recoding(recording)
+        download_recoding(recording, directory)
         print
 
     print_success("Finished!")
